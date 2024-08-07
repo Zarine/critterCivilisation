@@ -2,6 +2,10 @@ function getRandomArbitrary(min, max) {
   return Math.random() * (max - min) + min;
 };
 
+function getRandomArbitraryInt(min, max) {
+  return Math.round(getRandomArbitrary(min, max));
+};
+
 function calculateScore(array) {
   if (array.length == 0) {
     return 0;
@@ -10,20 +14,46 @@ function calculateScore(array) {
   return sum / array.length;
 }
 
-function addCellToArray(array, value) {
-  array.push("<td>" + displayNumber(value) + "</td>");
+function addCellToArray(array, value, tdClass) {
+  let html = []
+  if(tdClass) {
+    html.push('<td class="');
+    html.push(tdClass);
+    html.push('">');
+  }
+  else {
+    html.push("<td>");
+  }
+  html.push(formatNumber(value));
+  html.push("</td>");
+  array.push(html.join(""));
 }
 
-function displayNumber(number) {
+function compareStat(stat, statIndex, breeder) {
+  if(!breeder) return;
+  let currentCritter = player.breed[breeder];
+  return compareToText(stat, currentCritter.stats[statIndex]);
+}
+
+function compareScore(score, breeder) {
+  if(!breeder) return;
+  let currentCritter = player.breed[breeder];
+  return compareToText(score, currentCritter.score);
+}
+
+function compareToText(lhs, rhs) {
+  if(lhs == rhs) return "same";
+  if(lhs > rhs) return "better";
+  return "worse";
+}
+
+function formatNumber(number) {
+  if(number % 1 === 0) return number
   if(number >= 1000) {
     return number.toFixed(0);
   }
   return number.toFixed(1);
 }
 
-function displayInit() {
-  updateBreederDisplay();
-  updatePoolDisplay($("#malePool"), player.breed.malePool);
-  updatePoolDisplay($("#femalePool"), player.breed.femalePool);
-  
-}
+
+

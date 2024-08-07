@@ -13,7 +13,7 @@ class Critter {
 }
 
 function breedPossible() {
-  return true;
+  return (player.breed.malePool.length < player.breed.maxPoolSize || player.breed.femalePool.length < player.breed.maxPoolSize);
 }
 
 function breed() {
@@ -24,7 +24,7 @@ function breed() {
   for(let i = 0; i < gameConstants.numberOfStats; i++) {
     let min = Math.min(maleStats[i], femaleStats[i]);
     let max = Math.max(maleStats[i], femaleStats[i]);
-    let babyStat = getRandomArbitrary(min * player.breed.minFactor, max * player.breed.maxFactor);
+    let babyStat = getRandomArbitraryInt(min * player.breed.minFactor, max * player.breed.maxFactor);
     babyStats.push(babyStat);
   }
 
@@ -33,83 +33,64 @@ function breed() {
 };
 
 function promoteMale() {
-  let promoted = player.breed.malePool.pop();
-  promote(promoted, player.breed.male)
+  if(player.breed.malePool.length == 0) return;
+  let critterIndex = player.selectors.malePool.index ? player.selectors.malePool.index : 0;
+  player.selectors.malePool = {};
+  
+  promote(player.breed.malePool, critterIndex, player.breed.male)
 }
 
 function promoteFemale() {
-  let promoted = player.breed.femalePool.pop();
-  promote(promoted, player.breed.female)
+  if(player.breed.femalePool.length == 0) return;
+  let critterIndex = player.selectors.femalePool.index ? player.selectors.femalePool.index : 0;
+  player.selectors.femalePool = {};
+  
+  promote(player.breed.femalePool, critterIndex, player.breed.female)
 }
 
-function promote(promoted, breader) {
-  breader.update(promoted.stats);
+function promote(pool, index, breeder) {
+  let promoted = pool[index];
+  breeder.update(promoted.stats);
+  
+  pool.splice(index, 1);
+  
   updateBreederDisplay();
   updatePoolDisplay();
 }
 
+
 function trashMale() {
-  player.breed.malePool.pop();
+  if(player.breed.malePool.length == 0) return;
+  let critterIndex = player.selectors.malePool.index ? player.selectors.malePool.index : 0;
+  player.breed.malePool.splice(critterIndex, 1);
+  player.selectors.malePool = {};
+
   updatePoolDisplay();
 }
 
 function trashFemale() {
-  player.breed.femalePool.pop();
+  if(player.breed.femalePool.length == 0) return;
+  let critterIndex = player.selectors.femalePool.index ? player.selectors.femalePool.index : 0;
+  player.breed.femalePool.splice(critterIndex, 1);
+  player.selectors.femalePool = {};
+  
   updatePoolDisplay();
 }
 
 function addToPool(critter) {
+  let malePossible = player.breed.malePool.length < player.breed.maxPoolSize;
+  let femalePossible = player.breed.femalePool.length < player.breed.maxPoolSize;
+  
+  if(!malePossible && !femalePossible) return;
+  
   let pool;
-  if(Math.random() < 0.5) {
+  if(malePossible && (!femalePossible || Math.random() < 0.5)) {
     pool = player.breed.malePool;
   }
   else {
     pool = player.breed.femalePool;
   }
-  
-  if(pool.length >= player.breed.maxPoolSize) return;
-  
+    
   pool.push(critter);
   updatePoolDisplay();
-}
-
-function updateBreedProgress() {
-  $("#breedProgress").attr("value", player.breed.currentProgress);
-  $("#breedProgress").attr("max", player.breed.targetProgress);
-}
-
-function updateBreederDisplay() {
-  updateCritterTableDisplay($("#maleBreader"), [player.breed.male]);
-  updateCritterTableDisplay($("#femaleBreader"), [player.breed.female]);
-};
-
-function updatePoolDisplay() {
-  updateCritterTableDisplay($("#malePool"), player.breed.malePool);
-  updateCritterTableDisplay($("#femalePool"), player.breed.femalePool);
-}
-
-function updateCritterTableDisplay(table, critterArray) {
-  let statsLines = [];
-  statsLines.push(getCritterHeader());
-  critterArray.forEach((critter) => {
-    statsLines.push('<tr class="breederStats">');
-    let stats = critter.stats;
-    
-    addCellToArray(statsLines, critter.score);
-    stats.forEach((stat) => {
-      addCellToArray(statsLines, stat);
-    });
-    statsLines.push('</tr>');
-  });
-  table.html(statsLines.join(""));
-}
-
-function getCritterHeader() {
-  let statsHeader = [];
-  statsHeader.push("<tr><th>Score</th>");
-  gameConstants.stats.forEach((stat) => {
-    statsHeader.push("<th>"+ stat + "</th>");
-  });
-  statsHeader.push("</tr>");
-  return statsHeader.join("");
 }

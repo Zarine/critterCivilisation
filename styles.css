@@ -21,3 +21,20 @@ table, th, td {
   border: 1px solid;
   border-collapse: collapse;
 }
+
+td {
+  opacity: 0.8;
+}
+
+td.better {
+  background: green;
+}
+
+td.worse {
+  background: darkorange;
+}
+
+tr.selected td {
+  opacity: 1;
+  border: 2px solid;
+}

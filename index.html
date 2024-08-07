@@ -7,8 +7,8 @@
     <script src="js/helpers.js"></script>
     <script src="js/critter.js"></script>
     <script src="js/tabs.js"></script>
+    <script src="js/display.js"></script>
     <script src="js/main.js"></script>
-    
   </head>
   <body>
     <h1>Critter Civilisation</h1>
@@ -38,14 +38,14 @@
         <div class="babyPool">
           <div class="poolData">
             <span>Male</span>
-            <table id="malePool" class="statTable">
+            <table id="malePool" breeder="male" selector="malePool" class="statTable">
             </table>
             <button onClick="promoteMale()">Promote</button>
             <button onClick="trashMale()">Trash</button>
           </div>
           <div class="poolData">
             <span>Female</span>
-            <table id="femalePool" class="statTable">
+            <table id="femalePool" breeder="female" selector="femalePool" class="statTable">
             </table>
             <button onClick="promoteFemale()">Promote</button>
             <button onClick="trashFemale()">Trash</button>
