@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Critter Civilisation</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="js/jquery-3.7.1.min.js"></script>
+    <script src="js/helpers.js"></script>
+    <script src="js/critter.js"></script>
+    <script src="js/tabs.js"></script>
+    <script src="js/main.js"></script>
+    
+  </head>
+  <body>
+    <h1>Critter Civilisation</h1>
+    <ul>
+      <li onClick="switchTab('hatchery')">
+        <div>Hatchery</div>
+      </li>
+      <li onClick="switchTab('upgrade')">
+        <div>Upgrade</div>
+      </li>
+    </ul>
+    <div id="tabs">
+      <div id="hatchery" class="tab">
+        <div class="breeders">
+          <progress id="breedProgress" class="breedProgress w3-green" value="0" max="1000"></progress>
+          <div class="breederData">
+            <span>Male</span>
+            <table id="maleBreader" class="statTable">
+            </table>
+          </div>
+          <div class="breederData">
+            <span>Female</span>
+            <table id="femaleBreader" class="statTable">
+            </table>
+          </div>
+        </div>
+        <div class="babyPool">
+          <div class="poolData">
+            <span>Male</span>
+            <table id="malePool" class="statTable">
+            </table>
+            <button onClick="promoteMale()">Promote</button>
+            <button onClick="trashMale()">Trash</button>
+          </div>
+          <div class="poolData">
+            <span>Female</span>
+            <table id="femalePool" class="statTable">
+            </table>
+            <button onClick="promoteFemale()">Promote</button>
+            <button onClick="trashFemale()">Trash</button>
+          </div>
+        </div>
+      </div>
+      <div id="upgrade" class="tab hidden">
+        <div>
+          upgrade
+        </div>
+      </div>
+      
+      
+    </div>
+  </body>
+</html>

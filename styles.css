@@ -1,0 +1,23 @@
+.hidden {
+  display: none;
+}
+
+.tab {
+  width: 80%;
+  margin: auto;
+}
+
+.breedProgress {
+  width: 100%;
+  height: 10px;
+}
+
+.breederData, .poolData {
+  display: inline-block;
+  width: 49%;
+}
+
+table, th, td {
+  border: 1px solid;
+  border-collapse: collapse;
+}
