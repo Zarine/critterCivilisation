@@ -1,12 +1,14 @@
-const player = {};
-const gameConstants = {};
+let player = {};
+let gameConstants = {};
 
 function init() {
   gameConstants.mainLoopInterval = 100;
   gameConstants.stats = ["Strength", "Stamina", "Agility"]
   gameConstants.numberOfStats = gameConstants.stats.length;
-  let baseMaleCritter = new Critter([10, 5 ,8]);
-  let baseFemaleCritter = new Critter([10, 5 ,8]);
+  let baseMaleCritter = new Critter([10, 10 ,10]);
+  let baseFemaleCritter = new Critter([10, 10 ,10]);
+  
+  player.version = "0.01"
   
   player.breed = {};
   player.breed.male = baseMaleCritter;
@@ -19,13 +21,46 @@ function init() {
   player.breed.femalePool = [];
   player.breed.maxPoolSize = 2;
   
+  player.mount = {};
+  player.mount.unlocked = false;
+  player.mount.resources = {};
+  player.mount.resources.food = 100;
+  
+  player.upgrade = {};
+  player.upgrade.rna = 0;
+  player.upgrade.dna = 0;
+  player.upgrade.purchased = new Set([]);
+  
   player.selectors = {};
   player.selectors.malePool = {};
   player.selectors.femalePool = {};
   
   player.time = Date.now();
   
-  displayInit();
+  initUpgrades();
+  updateUpgradeList();
+  displayInitTabs();
+  displayInitHatchery();
+}
+
+function save() {
+  const playerString = JSON.stringify(player);
+  const upgradeSetString = JSON.stringify(Array.from(player.upgrade.purchased));
+  localStorage.setItem('playerData', playerString);
+  localStorage.setItem('upgradeData', upgradeSetString);
+}
+
+function load() {
+  const playerString = localStorage.getItem('playerData');
+  player = JSON.parse(playerString);
+  player.time = Date.now(); // For now no offline progress
+  
+  const upgradeSetArray = JSON.parse(localStorage.getItem('upgradeData'));
+  player.upgrade.purchased = new Set(upgradeSetArray);
+  
+  updateUpgradePurchasedFromPlayer();
+  updateBreederDisplay();
+  updatePoolDisplay();
 }
 
 function BreedLoop() {
@@ -34,7 +69,7 @@ function BreedLoop() {
   player.time = now;
   
   progressBreed(diff);
-  updateBreedProgress()
+  updateBreedProgress();
   
   setTimeout(BreedLoop, gameConstants.mainLoopInterval);
 };

@@ -1,8 +1,14 @@
-function displayInit() {
+function displayInitTabs() {
+  if(!player.mount.unlocked) {
+    $("#MountTab").addClass("hidden");
+  }
+  else $("#MountTab").removeClass("hidden");
+}
+
+function displayInitHatchery() {
   updateBreederDisplay();
   updatePoolDisplay($("#malePool"), player.breed.malePool);
   updatePoolDisplay($("#femalePool"), player.breed.femalePool);
-  
 }
 
 function updateBreedProgress() {
@@ -50,7 +56,7 @@ function addClickSelector() {
   
   rows.removeClass(selected);
   if(currentlySelected) {
-    player.selectors[table.attr("selector")] = {};
+    player.selectors[table.attr("selector")].index = undefined;
     return;
   }
   
@@ -76,4 +82,43 @@ function getCritterHeader() {
   });
   statsHeader.push("</tr>");
   return statsHeader.join("");
+}
+
+function updateUpgradeResources() {
+  $("#rnaValue").text(formatNumber(player.upgrade.rna));
+  $("#dnaValue").text(formatNumber(player.upgrade.dna));
+}
+
+function upgradeTemplate(upgrade) {
+  let upgradeHtml = [];
+  upgradeHtml.push('<div class="upgrade');
+  if(upgrade.canBuy()) upgradeHtml.push(' buyable');
+  upgradeHtml.push('"><div>');
+  upgradeHtml.push(upgrade.name);
+  upgradeHtml.push('</div>');
+  
+  upgrade.cost.forEach((value, index) => {
+    if(!value) return;
+    upgradeHtml.push('<div onClick="buyUpgrade(');
+    upgradeHtml.push(index);
+    upgradeHtml.push(')">');
+    upgradeHtml.push(value);
+    upgradeHtml.push(' ');
+    upgradeHtml.push(costMapping[index]);
+    upgradeHtml.push('</div>');
+  });
+  upgradeHtml.push('</div>');
+  return upgradeHtml.join("");
+}
+
+function updateUpgradeList() {
+  let upgradeList = $("#upgrades");
+  let upgradesHtml = [];
+  upgrades.forEach((upgrade) => {
+    if(!upgrade.available()) return;
+    if(upgrade.purchased) return;
+    upgradesHtml.push(upgradeTemplate(upgrade));
+  });
+  upgradeList.html(upgradesHtml.join(""));
+  
 }

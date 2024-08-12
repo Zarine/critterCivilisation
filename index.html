@@ -8,21 +8,29 @@
     <script src="js/critter.js"></script>
     <script src="js/tabs.js"></script>
     <script src="js/display.js"></script>
+    <script src="js/upgrade.js"></script>
     <script src="js/main.js"></script>
   </head>
   <body>
-    <h1>Critter Civilisation</h1>
-    <ul>
-      <li onClick="switchTab('hatchery')">
-        <div>Hatchery</div>
-      </li>
-      <li onClick="switchTab('upgrade')">
-        <div>Upgrade</div>
-      </li>
-    </ul>
-    <div id="tabs">
+    <div class="header">
+      <h1>Critter Civilisation</h1>
+      <ul class="tabMenu">
+        <li id="HatcheryTab" onClick="switchTab('hatchery')">
+          <div>Hatchery</div>
+        </li>
+        <li id="MountTab" onClick="switchTab('mount')">
+          <div>Mount</div>
+        </li>
+        <li id="UpgradeTab" onClick="switchTab('upgrade')">
+          <div>Upgrade</div>
+        </li>
+      </ul>
+    </div>
+    <div id="tabs" class="tabContainer">
       <div id="hatchery" class="tab">
+        <h2>Hatchery</h2>
         <div class="breeders">
+          <div>Breed progress :</div>
           <progress id="breedProgress" class="breedProgress w3-green" value="0" max="1000"></progress>
           <div class="breederData">
             <span>Male</span>
@@ -52,13 +60,83 @@
           </div>
         </div>
       </div>
+      <div id="mount" class="tab hidden">
+        <h2>Mount</h2>
+        <div class="mountContainer">
+          <div class="resourceList">
+            <ul>
+              <li>
+                <div>
+                  <span>Food : </span>
+                  <span id="foodValue">10</span>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <span>Wood : </span>
+                  <span id="woodValue">10</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="mountActions">
+            <div class="newBuilding mountAction">
+              New buildings
+            </div>
+            <div class="production mountAction">
+              manage Prod
+            </div>
+          </div>
+          <div class="buildings">
+            <ul>
+              <li>
+                <div>
+                  <span>House : </span>
+                  <span id="houseValue">10</span>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <span>Mine : </span>
+                  <span id="mineValue">10</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <div id="upgrade" class="tab hidden">
-        <div>
-          upgrade
+        <h2>Upgrades</h2>
+        <div class="upgradeContainer">
+          <div class="upgradeResourceList">
+            <ul>
+              <li>
+                <div>
+                  <span>RNA : </span>
+                  <span id="rnaValue">0</span>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <span>DNA : </span>
+                  <span id="dnaValue">0</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="upgradeList">
+            <div id="upgrades" class="upgrades">
+              <div class="upgrade">
+                <div>first upgrade</div>
+                <div>5 RNA</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
       
     </div>
+    <div class="footer">Version 0.01</div>
   </body>
 </html>

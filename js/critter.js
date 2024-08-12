@@ -1,14 +1,24 @@
 
 class Critter {
   constructor(stats) {
+    for(let i = 0; i < stats.length; i++)
+      stats[i] = Math.max(stats[i], 6); //To avoid locked stat at 5 because of formula, min is 6
     this.stats = stats;
-    this.score = calculateScore(stats);
+    this.score = this.calculateScore();
     if(stats.length > gameConstants.numberOfStats) console.warn("Too many stats for critter");
   }
   
   update(newStats) {
     this.stats = newStats;
-    this.score = calculateScore(newStats);
+    this.score = this.calculateScore();
+  }
+  
+  calculateScore() {
+    if (this.stats.length == 0) {
+      return 0;
+    }
+    const sum = this.stats.reduce((acc, val) => acc + val, 0);
+    return sum / this.stats.length;
   }
 }
 
@@ -61,21 +71,26 @@ function promote(pool, index, breeder) {
 
 function trashMale() {
   if(player.breed.malePool.length == 0) return;
-  let critterIndex = player.selectors.malePool.index ? player.selectors.malePool.index : 0;
-  player.breed.malePool.splice(critterIndex, 1);
-  player.selectors.malePool = {};
-
-  updatePoolDisplay();
+  trash(player.breed.malePool, player.selectors.malePool)
 }
 
 function trashFemale() {
   if(player.breed.femalePool.length == 0) return;
-  let critterIndex = player.selectors.femalePool.index ? player.selectors.femalePool.index : 0;
-  player.breed.femalePool.splice(critterIndex, 1);
-  player.selectors.femalePool = {};
+  trash(player.breed.femalePool, player.selectors.femalePool)
+}
+
+function trash(pool, selector) {
+  let critterIndex = selector.index ? selector.index : 0;
+  let trashedScore = pool[critterIndex].score;
+  pool.splice(critterIndex, 1);
+  selector.index = undefined
+  
+  addUpgradeResources(trashedScore / 10, 0);
   
   updatePoolDisplay();
 }
+
+
 
 function addToPool(critter) {
   let malePossible = player.breed.malePool.length < player.breed.maxPoolSize;

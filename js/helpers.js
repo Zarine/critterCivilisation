@@ -6,14 +6,6 @@ function getRandomArbitraryInt(min, max) {
   return Math.round(getRandomArbitrary(min, max));
 };
 
-function calculateScore(array) {
-  if (array.length == 0) {
-    return 0;
-  }
-  const sum = array.reduce((acc, val) => acc + val, 0);
-  return sum / array.length;
-}
-
 function addCellToArray(array, value, tdClass) {
   let html = []
   if(tdClass) {

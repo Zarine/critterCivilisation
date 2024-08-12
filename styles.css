@@ -1,10 +1,20 @@
 .hidden {
-  display: none;
+  display: none !important;
+}
+
+ul.tabMenu {
+  list-style-type: none;
+  padding: 0;
+}
+ul.tabMenu li {
+  display: inline-block;
+  margin-right: 10px;
 }
 
 .tab {
   width: 80%;
   margin: auto;
+  height: 100%;
 }
 
 .breedProgress {
@@ -37,4 +47,56 @@ td.worse {
 tr.selected td {
   opacity: 1;
   border: 2px solid;
+}
+
+.mountContainer, .upgradeContainer {
+  display: flex;
+  align-items: stretch;
+}
+
+.mountActions, .upgradeList {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+.resourceList, .buildings, .upgradeResourceList {
+  flex-grow: 1;
+  border: 1px solid;
+  border-radius: 10px
+}
+
+.upgradeResourceList {
+  flex-basis: 25%;
+}
+
+.mountActions {
+  flex-grow: 10;
+}
+
+.upgradeList {
+  flex-grow: 10;
+}
+
+.upgrades {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.upgrade {
+  flex: 0 1 auto;
+  border: 1px solid;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.buyable {
+  background: green;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
 }
