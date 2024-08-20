@@ -9,6 +9,7 @@
     <script src="js/tabs.js"></script>
     <script src="js/display.js"></script>
     <script src="js/upgrade.js"></script>
+    <script src="js/mount.js"></script>
     <script src="js/main.js"></script>
   </head>
   <body>
@@ -80,14 +81,15 @@
             </ul>
           </div>
           <div class="mountActions">
-            <div class="newBuilding mountAction">
-              New buildings
+            <div class="buildingList mountAction">
+              <div id="buildings" class="buildings">
+              </div>
             </div>
             <div class="production mountAction">
               manage Prod
             </div>
           </div>
-          <div class="buildings">
+          <div class="constructedBuildings">
             <ul>
               <li>
                 <div>
@@ -126,10 +128,6 @@
           </div>
           <div class="upgradeList">
             <div id="upgrades" class="upgrades">
-              <div class="upgrade">
-                <div>first upgrade</div>
-                <div>5 RNA</div>
-              </div>
             </div>
           </div>
         </div>

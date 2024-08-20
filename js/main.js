@@ -24,11 +24,15 @@ function init() {
   player.mount = {};
   player.mount.unlocked = false;
   player.mount.resources = {};
-  player.mount.resources.food = 100;
+  player.mount.resources.food = 4;
+  player.mount.resources.wood = 0;
+  player.mount.resources.stone = 0;
+  player.mount.building = {};
+  player.mount.building.purchased = new Set([]);
   
   player.upgrade = {};
-  player.upgrade.rna = 0;
-  player.upgrade.dna = 0;
+  player.upgrade.rna = 10;
+  player.upgrade.dna = 10;
   player.upgrade.purchased = new Set([]);
   
   player.selectors = {};
@@ -38,16 +42,21 @@ function init() {
   player.time = Date.now();
   
   initUpgrades();
-  updateUpgradeList();
+  initMount();
+  
   displayInitTabs();
   displayInitHatchery();
+  updateUpgradeScreen();
+  updateBuildingList();
 }
 
 function save() {
   const playerString = JSON.stringify(player);
   const upgradeSetString = JSON.stringify(Array.from(player.upgrade.purchased));
+  const buildingSetString = JSON.stringify(Array.from(player.mount.building.purchased));
   localStorage.setItem('playerData', playerString);
   localStorage.setItem('upgradeData', upgradeSetString);
+  localStorage.setItem('buildingData', buildingSetString);
 }
 
 function load() {
@@ -58,7 +67,11 @@ function load() {
   const upgradeSetArray = JSON.parse(localStorage.getItem('upgradeData'));
   player.upgrade.purchased = new Set(upgradeSetArray);
   
+  const buildingSetArray = JSON.parse(localStorage.getItem('buildingData'));
+  player.mount.building.purchased = new Set(buildingSetArray);
+  
   updateUpgradePurchasedFromPlayer();
+  updateBuildingPurchasedFromPlayer();
   updateBreederDisplay();
   updatePoolDisplay();
 }

@@ -60,7 +60,7 @@ tr.selected td {
   padding: 5px;
 }
 
-.resourceList, .buildings, .upgradeResourceList {
+.resourceList, .constructedBuildings, .upgradeResourceList {
   flex-grow: 1;
   border: 1px solid;
   border-radius: 10px
@@ -78,13 +78,13 @@ tr.selected td {
   flex-grow: 10;
 }
 
-.upgrades {
+.upgrades, .buildings {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 }
 
-.upgrade {
+.upgrade, .building {
   flex: 0 1 auto;
   border: 1px solid;
   border-radius: 10px;

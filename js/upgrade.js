@@ -1,5 +1,5 @@
 const upgrades = [];
-const costMapping = [];
+const upgradeCostMapping = [];
 
 class Upgrade {
   constructor(name, id, cost, available) {
@@ -12,22 +12,31 @@ class Upgrade {
   }
 }
 
-function addUpgradeResources(rna, dna) {
-  player.upgrade.rna += rna;
-  player.upgrade.dna += dna;
+function initUpgrades() {
+  upgradeCostMapping.push("RNA");
+  upgradeCostMapping.push("DNA");
+  
+  upgrades.push(new Upgrade("Mount", "u01", [2,1], function() { return player.upgrade.rna > 0; }));
+}
+
+function updateUpgradeScreen() {
   updateUpgradeResources();
   updateUpgradeList();
 }
 
-function initUpgrades() {
-  costMapping.push("RNA");
-  costMapping.push("DNA");
-  
-  upgrades.push(new Upgrade("Mount", "u01", [2,0], function() { return player.upgrade.rna > 0; }));
+function addUpgradeResources(rna, dna) {
+  player.upgrade.rna += rna;
+  player.upgrade.dna += dna;
+  updateUpgradeScreen();
 }
 
-function buyUpgrade(index) {
-  let upgrade = upgrades[index];
+function getUpgrade(id) {
+  return upgrades.find(obj => obj.id === id);
+}
+
+function buyUpgrade(id) {
+  let upgrade = getUpgrade(id);
+  if(!upgrade) return;
   if(!upgrade.available()) return;
   if(upgrade.purchased) return;
   if(upgrade.cost[0] > player.upgrade.rna && upgrade.cost[1] > player.upgrade.dna) return;
@@ -36,11 +45,9 @@ function buyUpgrade(index) {
   player.upgrade.dna -= upgrade.cost[1];
   upgrade.purchased = true;
   player.upgrade.purchased.add(upgrade.id);
-  
+
   applyUpgradeEffect();
-  updateUpgradeResources();
-  updateUpgradeList();
-  displayInitTabs();
+  updateUpgradeScreen();
 }
 
 function updateUpgradePurchasedFromPlayer() {
@@ -49,10 +56,17 @@ function updateUpgradePurchasedFromPlayer() {
     upgrade.purchased = true;
   });
   applyUpgradeEffect();
-  updateUpgradeList();
+  updateUpgradeScreen();
   displayInitTabs();
 }
 
+function hasUpgrade(id) {
+  return player.upgrade.purchased.has(id);
+}
+
 function applyUpgradeEffect() {
-  if(player.upgrade.purchased.has("u01")) player.mount.unlocked = true;
+  if(hasUpgrade("u01")) { 
+    player.mount.unlocked = true;
+    displayInitTabs();
+  }
 }

@@ -92,19 +92,21 @@ function updateUpgradeResources() {
 function upgradeTemplate(upgrade) {
   let upgradeHtml = [];
   upgradeHtml.push('<div class="upgrade');
-  if(upgrade.canBuy()) upgradeHtml.push(' buyable');
+  if(upgrade.canBuy()) {
+    upgradeHtml.push(` buyable" onClick="buyUpgrade('`);
+    upgradeHtml.push(upgrade.id);
+    upgradeHtml.push(`')`);
+  }
   upgradeHtml.push('"><div>');
   upgradeHtml.push(upgrade.name);
   upgradeHtml.push('</div>');
   
   upgrade.cost.forEach((value, index) => {
     if(!value) return;
-    upgradeHtml.push('<div onClick="buyUpgrade(');
-    upgradeHtml.push(index);
-    upgradeHtml.push(')">');
+    upgradeHtml.push('<div>');
     upgradeHtml.push(value);
     upgradeHtml.push(' ');
-    upgradeHtml.push(costMapping[index]);
+    upgradeHtml.push(upgradeCostMapping[index]);
     upgradeHtml.push('</div>');
   });
   upgradeHtml.push('</div>');
@@ -120,5 +122,41 @@ function updateUpgradeList() {
     upgradesHtml.push(upgradeTemplate(upgrade));
   });
   upgradeList.html(upgradesHtml.join(""));
+  
+}
+
+function buildingTemplate(building) {
+  let buildingHtml = [];
+  buildingHtml.push('<div class="building');
+  if(building.canBuy()) {
+    buildingHtml.push(` buyable" onClick="buyBuilding('`);
+    buildingHtml.push(building.id);
+    buildingHtml.push(`')`);
+  }
+  buildingHtml.push('"><div>');
+  buildingHtml.push(building.name);
+  buildingHtml.push('</div>');
+  
+  building.cost.forEach((value, index) => {
+    if(!value) return;
+    buildingHtml.push('<div>');
+    buildingHtml.push(value);
+    buildingHtml.push(' ');
+    buildingHtml.push(buildingCostMapping[index]);
+    buildingHtml.push('</div>');
+  });
+  buildingHtml.push('</div>');
+  return buildingHtml.join("");
+}
+
+function updateBuildingList() {
+  let buildingList = $("#buildings");
+  let buildingsHtml = [];
+  buildings.forEach((building) => {
+    if(!building.available()) return;
+    if(building.purchased) return;
+    buildingsHtml.push(buildingTemplate(building));
+  });
+  buildingList.html(buildingsHtml.join(""));
   
 }
