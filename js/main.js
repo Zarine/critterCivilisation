@@ -1,6 +1,16 @@
 let player = {};
 let gameConstants = {};
 
+function initProduction(productionType) {
+  let product = player.mount.production[productionType] = {};
+  product.unlocked = false;
+  product.quantity = 0;
+  product.maxSize = 0;
+  product.pool = [];
+  product.progress = 0;
+  product.target = 1000;
+}
+
 function init() {
   gameConstants.mainLoopInterval = 100;
   gameConstants.stats = ["Strength", "Stamina", "Agility"]
@@ -25,20 +35,16 @@ function init() {
   player.mount = {};
   player.mount.time = Date.now();
   player.mount.unlocked = false;
-  player.mount.resources = {};
-  player.mount.resources.food = 4;
-  player.mount.resources.dirt = 0;
-  player.mount.resources.wood = 0;
-  player.mount.resources.stone = 0;
   player.mount.building = {};
   player.mount.building.purchased = new Set([]);
   player.mount.production = {};
-  player.mount.production.dirt = {};
-  player.mount.production.dirt.unlocked = false;
-  player.mount.production.dirt.maxSize = 0;
-  player.mount.production.dirt.pool = [];
-  player.mount.production.dirt.progress = 0;
-  player.mount.production.dirt.target = 1000;
+  initProduction("food");
+  initProduction("dirt");
+  initProduction("wood");
+  initProduction("stone");
+  
+  player.mount.production.food.quantity = 4;
+
   
   player.upgrade = {};
   player.upgrade.rna = 10;
@@ -101,8 +107,7 @@ function productionLoop() {
   player.mount.time = now;
   
   progressProduction(diff);
-  updateMountResources();
-  updateProductionProgress();
+  updateMountScreen();
   
   setTimeout(productionLoop, gameConstants.mainLoopInterval);
 }

@@ -8,11 +8,32 @@ class Building {
     this.available = available;
     this.cost = cost;
     this.purchased = false;
-    this.canBuy = (function () { 
-      return player.mount.resources.dirt >= this.cost[0] 
-          && player.mount.resources.wood >= this.cost[1]
-          && player.mount.resources.stone >= this.cost[2]; 
-    });
+    this.check = {};
+    this.check.purchased = false;
+    this.check.available = false;
+    this.check.canBuy = false;
+  }
+  
+  canBuy() {
+    return getResourceQuantity("dirt") >= this.cost[0] 
+          && getResourceQuantity("wood") >= this.cost[1]
+          && getResourceQuantity("stone") >= this.cost[2]; 
+  }
+  
+  hasChanged() {
+    let result = false;
+    result |= (this.check.purchased != this.purchased);
+    this.check.purchased = this.purchased;
+    
+    let currentAvailable = this.available();
+    result |= (this.check.available != currentAvailable);
+    this.check.available = currentAvailable;
+    
+    let currentCanBuy = this.canBuy();
+    result |= (this.check.canBuy != this.canBuy());
+    this.check.canBuy = currentCanBuy;
+    
+    return result;
   }
 }
 
@@ -25,10 +46,19 @@ function initMount() {
   buildings.push(new Building("Farm", "b02", [10,0,0], function() { return hasBuilding("b01"); }));
 }
 
+function hasBuildingListChanged() {
+  let result = false;
+  buildings.forEach(building => {
+    if(building.hasChanged()) result = true;
+  });
+  return result;
+}
+
 function updateMountScreen() {
   updateMountResources();
   updateBuildingList();
   updatePurchasedBuildings();
+  updateProductionProgress();
   updateEntireProductions();
 }
 
@@ -47,8 +77,9 @@ function buyBuilding(id) {
   if(building.purchased) return;
   if(!building.canBuy()) return;
   
-  player.mount.resources.wood -= building.cost[0];
-  player.mount.resources.stone -= building.cost[1];
+  getResource("dirt").quantity -= building.cost[0];
+  getResource("wood").quantity -= building.cost[1];
+  getResource("stone").quantity -= building.cost[2];
   building.purchased = true;
   player.mount.building.purchased.add(building.id);
 
@@ -80,7 +111,7 @@ function applyBuildingEffect() {
     displayArea("femaleToProd");
   }
   if(hasBuilding("b02")) {
-    player.mount.resources.food = 6;
+    getResource("food").quantity = 6;
   }
 }
 
@@ -119,17 +150,30 @@ function addToDirtPool(newCritter) {
   }
 }
 
+function getResource(type) {
+  return player.mount.production[type];
+}
+
+function getResourceQuantity(type) {
+  return player.mount.production[type].quantity;
+}
+
 function progressProduction(diff) {
   
   calculateDirtProgress(diff);
-  if(player.mount.production.dirt.progress > player.mount.production.dirt.target) {
-    let quantity = Math.floor(player.mount.production.dirt.progress / player.mount.production.dirt.target)
-    player.mount.resources.dirt += quantity;
-    player.mount.production.dirt.progress = player.mount.production.dirt.progress % player.mount.production.dirt.target;
-  }
+  updateResource(getResource("dirt"));
 }
 
 function calculateDirtProgress(diff) {
-  let dirtPower = player.mount.production.dirt.pool.reduce((acc, obj) => acc + obj.dirtProduction(), 0);
-  player.mount.production.dirt.progress += (diff * dirtPower / 1000);
+  let dirt = getResource("dirt");
+  let dirtPower = dirt.pool.reduce((acc, obj) => acc + obj.dirtProduction(), 0);
+  dirt.progress += (diff * dirtPower / 1000);
+}
+
+function updateResource(resource) {
+  if(resource.progress > resource.target) {
+    let quantity = Math.floor(resource.progress / resource.target)
+    resource.quantity += quantity;
+    resource.progress = resource.progress % resource.target;
+  }
 }

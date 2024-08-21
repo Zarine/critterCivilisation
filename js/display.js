@@ -168,6 +168,8 @@ function buildingTemplate(building) {
 }
 
 function updateBuildingList() {
+  if(!hasBuildingListChanged()) return;
+  
   let buildingList = $("#buildings");
   let buildingsHtml = [];
   buildings.forEach((building) => {
@@ -181,10 +183,10 @@ function updateBuildingList() {
 
 function updateMountResources() {
   $("#foodValue").text(formatNumber(getTotalCritter()));
-  $("#maxFoodValue").text(formatNumber(player.mount.resources.food));
-  $("#dirtValue").text(formatNumber(player.mount.resources.dirt));
-  $("#woodValue").text(formatNumber(player.mount.resources.wood));
-  $("#stoneValue").text(formatNumber(player.mount.resources.stone));
+  $("#maxFoodValue").text(formatNumber(getResourceQuantity("food")));
+  $("#dirtValue").text(formatNumber(getResourceQuantity("dirt")));
+  $("#woodValue").text(formatNumber(getResourceQuantity("wood")));
+  $("#stoneValue").text(formatNumber(getResourceQuantity("stone")));
 }
 
 function purchasedBuildingTemplate(building) {

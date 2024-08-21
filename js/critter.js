@@ -31,7 +31,7 @@ class Critter {
 function breedPossible() {
   let freeMaleSpot = player.breed.malePool.length < player.breed.maxPoolSize;
   let freeFemaleSpot = player.breed.femalePool.length < player.breed.maxPoolSize;
-  let foodAvailable = getTotalCritter() < player.mount.resources.food;
+  let foodAvailable = getTotalCritter() < getResourceQuantity("food");
   return foodAvailable && (freeMaleSpot || freeFemaleSpot);
 }
 
