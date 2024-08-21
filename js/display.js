@@ -16,6 +16,11 @@ function updateBreedProgress() {
   $("#breedProgress").attr("max", player.breed.targetProgress);
 }
 
+function updateProductionProgress() {
+  $("#dirtProgress").attr("value", player.mount.production.dirt.progress);
+  $("#dirtProgress").attr("max", player.mount.production.dirt.target);
+}
+
 function updateBreederDisplay() {
   updateCritterTableDisplay($("#maleBreader"), [player.breed.male]);
   updateCritterTableDisplay($("#femaleBreader"), [player.breed.female]);
@@ -26,20 +31,33 @@ function updatePoolDisplay() {
   updateCritterTableDisplay($("#femalePool"), player.breed.femalePool, true);
 }
 
-function updateCritterTableDisplay(table, critterArray, selectable) {
-  let statsLines = [];
-  statsLines.push(getCritterHeader());
-  critterArray.forEach((critter) => {
-    statsLines.push('<tr class="breederStats">');
-    let stats = critter.stats;
+function pushCritterStats(statsLines, stats, score, table) {
+    statsLines.push('<tr class="critterStats">');
     
-    addCellToArray(statsLines, critter.score, compareScore(critter.score, table.attr("breeder")));
+    addCellToArray(statsLines, score, compareScore(score, table.attr("breeder")));
     stats.forEach((stat, statIndex) => {
       let compareClass = compareStat(stat, statIndex, table.attr("breeder"));
       addCellToArray(statsLines, stat, compareClass);
     });
     statsLines.push('</tr>');
+}
+
+function updateCritterTableDisplay(table, critterArray, selectable, displaySize) {
+  let statsLines = [];
+  statsLines.push(getCritterHeader());
+  
+  critterArray.forEach((critter) => {
+    let stats = critter.stats;
+    pushCritterStats(statsLines, stats, critter.score, table);
   });
+  if(critterArray.length < displaySize) {
+    let emptyStats = [];
+    for (let i = 0; i < gameConstants.numberOfStats; i++) {
+      emptyStats.push('');
+    }
+    pushCritterStats(statsLines, emptyStats, '', table);
+  }
+  
   table.html(statsLines.join(""));
   
   if(!selectable) return;
@@ -159,4 +177,43 @@ function updateBuildingList() {
   });
   buildingList.html(buildingsHtml.join(""));
   
+}
+
+function updateMountResources() {
+  $("#foodValue").text(formatNumber(getTotalCritter()));
+  $("#maxFoodValue").text(formatNumber(player.mount.resources.food));
+  $("#dirtValue").text(formatNumber(player.mount.resources.dirt));
+  $("#woodValue").text(formatNumber(player.mount.resources.wood));
+  $("#stoneValue").text(formatNumber(player.mount.resources.stone));
+}
+
+function purchasedBuildingTemplate(building) {
+  let buildingHtml = [];
+  buildingHtml.push('<li><div>');
+  buildingHtml.push(building.name);
+  buildingHtml.push('</div></li>');
+  return buildingHtml.join("");
+}
+
+function updatePurchasedBuildings() {
+  let purchasedBuilding = $("#purchasedBuildings");
+  purchasedBuildingHtml = [];
+  buildings.forEach((building) => {
+    if(!building.purchased) return;
+    purchasedBuildingHtml.push(purchasedBuildingTemplate(building));
+  });
+  
+  purchasedBuilding.html(purchasedBuildingHtml.join(""));
+}
+
+function displayArea(name) {
+  $("#" + name).removeClass("hidden");
+}
+
+function updateEntireProductions() {
+  updateDirtCritterTab();
+}
+
+function updateDirtCritterTab() {
+  updateCritterTableDisplay($("#dirtPool"), player.mount.production.dirt.pool, undefined, player.mount.production.dirt.maxSize);
 }

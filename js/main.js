@@ -11,6 +11,7 @@ function init() {
   player.version = "0.01"
   
   player.breed = {};
+  player.breed.time = Date.now();
   player.breed.male = baseMaleCritter;
   player.breed.female = baseFemaleCritter;
   player.breed.maxFactor = 1.1;
@@ -22,13 +23,22 @@ function init() {
   player.breed.maxPoolSize = 2;
   
   player.mount = {};
+  player.mount.time = Date.now();
   player.mount.unlocked = false;
   player.mount.resources = {};
   player.mount.resources.food = 4;
+  player.mount.resources.dirt = 0;
   player.mount.resources.wood = 0;
   player.mount.resources.stone = 0;
   player.mount.building = {};
   player.mount.building.purchased = new Set([]);
+  player.mount.production = {};
+  player.mount.production.dirt = {};
+  player.mount.production.dirt.unlocked = false;
+  player.mount.production.dirt.maxSize = 0;
+  player.mount.production.dirt.pool = [];
+  player.mount.production.dirt.progress = 0;
+  player.mount.production.dirt.target = 1000;
   
   player.upgrade = {};
   player.upgrade.rna = 10;
@@ -39,15 +49,13 @@ function init() {
   player.selectors.malePool = {};
   player.selectors.femalePool = {};
   
-  player.time = Date.now();
-  
   initUpgrades();
   initMount();
   
   displayInitTabs();
   displayInitHatchery();
   updateUpgradeScreen();
-  updateBuildingList();
+  updateMountScreen();
 }
 
 function save() {
@@ -76,16 +84,28 @@ function load() {
   updatePoolDisplay();
 }
 
-function BreedLoop() {
+function breedLoop() {
   let now = Date.now();
-  let diff = (now - player.time);
-  player.time = now;
+  let diff = (now - player.breed.time);
+  player.breed.time = now;
   
   progressBreed(diff);
   updateBreedProgress();
   
-  setTimeout(BreedLoop, gameConstants.mainLoopInterval);
+  setTimeout(breedLoop, gameConstants.mainLoopInterval);
 };
+
+function productionLoop() {
+  let now = Date.now();
+  let diff = (now - player.mount.time);
+  player.mount.time = now;
+  
+  progressProduction(diff);
+  updateMountResources();
+  updateProductionProgress();
+  
+  setTimeout(productionLoop, gameConstants.mainLoopInterval);
+}
 
 function progressBreed(diff) {
   player.breed.currentProgress += diff;
@@ -102,7 +122,8 @@ function progressBreed(diff) {
 function start() {
   init();
   updateBreederDisplay();
-  BreedLoop();
+  breedLoop();
+  productionLoop();
 }
 
 

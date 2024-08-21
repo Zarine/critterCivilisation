@@ -50,6 +50,7 @@
             <table id="malePool" breeder="male" selector="malePool" class="statTable">
             </table>
             <button onClick="promoteMale()">Promote</button>
+            <button id="maleToProd" class="hidden" onClick="productionMale()">To production</button>
             <button onClick="trashMale()">Trash</button>
           </div>
           <div class="poolData">
@@ -57,6 +58,7 @@
             <table id="femalePool" breeder="female" selector="femalePool" class="statTable">
             </table>
             <button onClick="promoteFemale()">Promote</button>
+            <button id="femaleToProd" class="hidden" onClick="productionFemale()">To production</button>
             <button onClick="trashFemale()">Trash</button>
           </div>
         </div>
@@ -65,44 +67,58 @@
         <h2>Mount</h2>
         <div class="mountContainer">
           <div class="resourceList">
-            <ul>
+            <div class="listTitle">Resources :</div>
+            <ul class="mountResourceList">
               <li>
                 <div>
                   <span>Food : </span>
-                  <span id="foodValue">10</span>
+                  <span id="foodValue">0</span>
+                  <span> / </span>
+                  <span id="maxFoodValue">0</span>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <span>Dirt : </span>
+                  <span id="dirtValue">0</span>
                 </div>
               </li>
               <li>
                 <div>
                   <span>Wood : </span>
-                  <span id="woodValue">10</span>
+                  <span id="woodValue">0</span>
+                </div>
+              </li>
+              <li>
+                <div>
+                  <span>Stone : </span>
+                  <span id="stoneValue">0</span>
                 </div>
               </li>
             </ul>
           </div>
           <div class="mountActions">
             <div class="buildingList mountAction">
+              <div>Build</div>
               <div id="buildings" class="buildings">
               </div>
             </div>
+            <div class="separator"></div>
             <div class="production mountAction">
-              manage Prod
+              <div>Productions</div>
+              <div id="productions" class="productions">
+                <div id="dirtProduction" class="production dirtProduction hidden">
+                  <div>Dirt field :</div>
+                  <progress id="dirtProgress" class="dirtProgress w3-green" value=0 max = 1000></progress>
+                  <table id="dirtPool" class="statTable">
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="constructedBuildings">
-            <ul>
-              <li>
-                <div>
-                  <span>House : </span>
-                  <span id="houseValue">10</span>
-                </div>
-              </li>
-              <li>
-                <div>
-                  <span>Mine : </span>
-                  <span id="mineValue">10</span>
-                </div>
-              </li>
+          <div class="ownedBuildings">
+            <div class="listTitle">Owned buildings :</div>
+            <ul class="ownedBuildingList" id="purchasedBuildings">
             </ul>
           </div>
         </div>
@@ -110,8 +126,9 @@
       <div id="upgrade" class="tab hidden">
         <h2>Upgrades</h2>
         <div class="upgradeContainer">
-          <div class="upgradeResourceList">
-            <ul>
+          <div class="upgradeResourceContainer">
+            <div class="listTitle">Upgrade resources :</div>
+            <ul class="upgradeResourceList">
               <li>
                 <div>
                   <span>RNA : </span>

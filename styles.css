@@ -2,6 +2,10 @@
   display: none !important;
 }
 
+.separator {
+  border-bottom: 1px solid;
+}
+
 ul.tabMenu {
   list-style-type: none;
   padding: 0;
@@ -15,6 +19,10 @@ ul.tabMenu li {
   width: 80%;
   margin: auto;
   height: 100%;
+}
+
+.critterStats {
+  height: 1em;
 }
 
 .breedProgress {
@@ -60,14 +68,22 @@ tr.selected td {
   padding: 5px;
 }
 
-.resourceList, .constructedBuildings, .upgradeResourceList {
+.resourceList, .ownedBuildings, .upgradeResourceContainer {
   flex-grow: 1;
   border: 1px solid;
   border-radius: 10px
 }
 
-.upgradeResourceList {
+.listTitle {
+  padding: 5px;
+}
+
+.upgradeResourceContainer {
   flex-basis: 25%;
+}
+
+.ownedBuildingList, .mountResourceList, .upgradeResourceList {
+  margin-block-start: 0;
 }
 
 .mountActions {
@@ -97,6 +113,6 @@ tr.selected td {
 }
 
 .footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
 }

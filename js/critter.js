@@ -1,10 +1,12 @@
 
 class Critter {
   constructor(stats) {
-    for(let i = 0; i < stats.length; i++)
+    for(let i = 0; i < stats.length; i++) {
       stats[i] = Math.max(stats[i], 6); //To avoid locked stat at 5 because of formula, min is 6
+    }
     this.stats = stats;
     this.score = this.calculateScore();
+    
     if(stats.length > gameConstants.numberOfStats) console.warn("Too many stats for critter");
   }
   
@@ -20,10 +22,17 @@ class Critter {
     const sum = this.stats.reduce((acc, val) => acc + val, 0);
     return sum / this.stats.length;
   }
+  
+  dirtProduction() {
+    return this.stats[0] + this.stats[1];
+  }
 }
 
 function breedPossible() {
-  return (player.breed.malePool.length < player.breed.maxPoolSize || player.breed.femalePool.length < player.breed.maxPoolSize);
+  let freeMaleSpot = player.breed.malePool.length < player.breed.maxPoolSize;
+  let freeFemaleSpot = player.breed.femalePool.length < player.breed.maxPoolSize;
+  let foodAvailable = getTotalCritter() < player.mount.resources.food;
+  return foodAvailable && (freeMaleSpot || freeFemaleSpot);
 }
 
 function breed() {
@@ -107,5 +116,35 @@ function addToPool(critter) {
   }
     
   pool.push(critter);
+  updateMountResources();
   updatePoolDisplay();
+}
+
+function productionMale() {
+  if(player.breed.malePool.length == 0) return;
+  let critterIndex = player.selectors.malePool.index ? player.selectors.malePool.index : 0;
+  player.selectors.malePool = {};
+  
+  toProduction(player.breed.malePool, critterIndex, player.breed.male)
+}
+
+function productionFemale() {
+  if(player.breed.femalePool.length == 0) return;
+  let critterIndex = player.selectors.femalePool.index ? player.selectors.femalePool.index : 0;
+  player.selectors.femalePool = {};
+  
+  toProduction(player.breed.femalePool, critterIndex, player.breed.female)
+}
+
+function toProduction(pool, index, breeder) {
+  let transfered = pool[index];
+  addCritterToProduction(transfered);
+  
+  pool.splice(index, 1);
+
+  updatePoolDisplay();
+}
+
+function getTotalCritter() {
+  return 2 + player.breed.malePool.length + player.breed.femalePool.length + player.mount.production.dirt.pool.length;
 }

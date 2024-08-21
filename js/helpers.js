@@ -40,7 +40,8 @@ function compareToText(lhs, rhs) {
 }
 
 function formatNumber(number) {
-  if(number % 1 === 0) return number
+  if(number === '') return '';
+  if(number % 1 === 0) return number;
   if(number >= 1000) {
     return number.toFixed(0);
   }

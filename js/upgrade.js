@@ -39,7 +39,7 @@ function buyUpgrade(id) {
   if(!upgrade) return;
   if(!upgrade.available()) return;
   if(upgrade.purchased) return;
-  if(upgrade.cost[0] > player.upgrade.rna && upgrade.cost[1] > player.upgrade.dna) return;
+  if(!upgrade.canBuy()) return;
   
   player.upgrade.rna -= upgrade.cost[0];
   player.upgrade.dna -= upgrade.cost[1];
