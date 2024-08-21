@@ -1,5 +1,7 @@
 const buildings = [];
-const buildingCostMapping = [];
+const resourceMapping = ["food", "dirt", "wood", "stone"];
+const buildingCostMapping = resourceMapping.slice(1);
+
 
 class Building {
   constructor(name, id, cost, available) {
@@ -15,9 +17,11 @@ class Building {
   }
   
   canBuy() {
-    return getResourceQuantity("dirt") >= this.cost[0] 
-          && getResourceQuantity("wood") >= this.cost[1]
-          && getResourceQuantity("stone") >= this.cost[2]; 
+    let result = true;
+    this.cost.forEach((value, index) => {
+      if(value > getResourceQuantity(buildingCostMapping[index])) result = false;
+    });
+    return result;
   }
   
   hasChanged() {
@@ -37,11 +41,7 @@ class Building {
   }
 }
 
-function initMount() {
-  buildingCostMapping.push("Dirt");
-  buildingCostMapping.push("Wood");
-  buildingCostMapping.push("Stone");
-  
+function initMount() { 
   buildings.push(new Building("Dirt Area", "b01", [0,0,0], function() { return true; }));
   buildings.push(new Building("Farm", "b02", [10,0,0], function() { return hasBuilding("b01"); }));
 }
@@ -55,6 +55,7 @@ function hasBuildingListChanged() {
 }
 
 function updateMountScreen() {
+  updateFood();
   updateMountResources();
   updateBuildingList();
   updatePurchasedBuildings();
@@ -77,9 +78,9 @@ function buyBuilding(id) {
   if(building.purchased) return;
   if(!building.canBuy()) return;
   
-  getResource("dirt").quantity -= building.cost[0];
-  getResource("wood").quantity -= building.cost[1];
-  getResource("stone").quantity -= building.cost[2];
+  building.cost.forEach((cost, index) => {
+    getResource(buildingCostMapping[index]).quantity -= cost;
+  });
   building.purchased = true;
   player.mount.building.purchased.add(building.id);
 
@@ -104,49 +105,69 @@ function hasBuilding(id) {
 
 function applyBuildingEffect() {
   if(hasBuilding("b01")) {
-    player.mount.production.dirt.unlocked = true;
-    player.mount.production.dirt.maxSize = 1;
+    let dirt = getResource("dirt");
+    dirt.unlocked = true;
+    dirt.maxSize = 1;
     displayArea("dirtProduction");
     displayArea("maleToProd");
     displayArea("femaleToProd");
   }
   if(hasBuilding("b02")) {
-    getResource("food").quantity = 6;
+    let food = getResource("food");
+    food.unlocked = true;
+    food.maxSize = 1;
+    displayArea("foodProduction");
   }
+}
+
+function updateFood() {
+  let food = getResource("food");
+  food.quantity = 4;
+  food.pool.forEach(critter => {
+    food.quantity += critter.production("food");
+  });
+  food.quantity = Math.floor(food.quantity);
+  
 }
 
 function addCritterToProduction(critter) {
   
-  if(betterThanDirtPool(critter))
-  {
-    addToDirtPool(critter);
-  }
-  
+  let assigned = false;
+  resourceMapping.forEach(resourceName => {
+    if(assigned) return;
+    if(betterThanPool(critter, resourceName)) {
+      addToMountPool(critter, resourceName);
+      assigned = true;
+    }
+  })
+
   updateMountScreen();
 }
 
-function betterThanDirtPool(newCritter) {
-  if(player.mount.production.dirt.pool.length < player.mount.production.dirt.maxSize) return true;
-  for(let i = 0 ; i < player.mount.production.dirt.pool.length; i++) {
-    let oldCritter = player.mount.production.dirt.pool[i];
-    if(betterThanDirtCritter(oldCritter, newCritter)) return true;
+function betterThanPool(newCritter, type) {
+  let resource = getResource(type);
+  if(resource.pool.length < resource.maxSize) return true;
+  for(let i = 0 ; i < resource.pool.length; i++) {
+    let oldCritter = resource.pool[i];
+    if(betterThanCritter(oldCritter, newCritter, type)) return true;
   }
   return false;
 }
 
-function betterThanDirtCritter(oldCritter, newCritter) {
-  if(oldCritter.dirtProduction() < newCritter.dirtProduction()) return true;
+function betterThanCritter(oldCritter, newCritter, type) {
+  if(oldCritter.production(type) < newCritter.production(type)) return true;
   return false;
 }
 
-function addToDirtPool(newCritter) {
-  if(player.mount.production.dirt.pool.length < player.mount.production.dirt.maxSize) {
-    player.mount.production.dirt.pool.push(newCritter);
+function addToMountPool(newCritter, type) {
+  let resource = getResource(type);
+  if(resource.pool.length < resource.maxSize) {
+    resource.pool.push(newCritter);
     return;
   }
-  for(let i = 0 ; i < player.mount.production.dirt.pool.length; i++) {
-    let oldCritter = player.mount.production.dirt.pool[i];
-    if(betterThanDirtCritter(oldCritter, newCritter)) oldCritter.update(newCritter.stats);
+  for(let i = 0 ; i < resource.pool.length; i++) {
+    let oldCritter = resource.pool[i];
+    if(betterThanCritter(oldCritter, newCritter, type)) oldCritter.update(newCritter.stats);
   }
 }
 

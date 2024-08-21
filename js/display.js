@@ -213,9 +213,11 @@ function displayArea(name) {
 }
 
 function updateEntireProductions() {
-  updateDirtCritterTab();
+  updateCritterTab("dirt");
+  updateCritterTab("food");
 }
 
-function updateDirtCritterTab() {
-  updateCritterTableDisplay($("#dirtPool"), player.mount.production.dirt.pool, undefined, player.mount.production.dirt.maxSize);
+function updateCritterTab(type) {
+  let resource = getResource(type);
+  updateCritterTableDisplay($("#" + type + "Pool"), resource.pool, undefined, resource.maxSize);
 }

@@ -26,6 +26,17 @@ class Critter {
   dirtProduction() {
     return this.stats[0] + this.stats[1];
   }
+  
+  production(type) {
+    switch (type) {
+      case "dirt":
+        return this.stats[0] + this.stats[1];
+      case "food":
+        return (0.5 * this.stats[1] + 1.5 * this.stats[2]) / 10;
+      default:
+        return this.score;
+    }
+  }
 }
 
 function breedPossible() {
