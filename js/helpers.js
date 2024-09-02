@@ -3,7 +3,7 @@ function getRandomArbitrary(min, max) {
 };
 
 function getRandomArbitraryInt(min, max) {
-  return Math.round(getRandomArbitrary(min, max));
+  return Math.floor(getRandomArbitrary(min, max + 1));
 };
 
 function addCellToArray(array, value, tdClass) {

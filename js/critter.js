@@ -33,6 +33,8 @@ class Critter {
         return this.stats[0] + this.stats[1];
       case "food":
         return (0.5 * this.stats[1] + 1.5 * this.stats[2]) / 10;
+      case "explore":
+        return 2 * this.stats[2];
       default:
         return this.score;
     }
@@ -59,8 +61,36 @@ function breed() {
   }
 
   const newCritter = new Critter(babyStats);
-  addToPool(newCritter);
+  addToBreederPool(newCritter);
 };
+
+function betterThanPool(newCritter, type, pool, maxSize) {
+  if(pool.length < maxSize) return true;
+  for(let i = 0 ; i < pool.length; i++) {
+    let oldCritter = pool[i];
+    if(betterThanCritter(oldCritter, newCritter, type)) return true;
+  }
+  return false;
+}
+
+function betterThanCritter(oldCritter, newCritter, type) {
+  if(oldCritter.production(type) < newCritter.production(type)) return true;
+  return false;
+}
+
+function addToPool(newCritter, type, pool, maxSize) {
+  if(pool.length < maxSize) {
+    pool.push(newCritter);
+    return;
+  }
+  for(let i = 0 ; i < pool.length; i++) {
+    let oldCritter = pool[i];
+    if(betterThanCritter(oldCritter, newCritter, type)) {
+      oldCritter.update(newCritter.stats);
+      return;
+    }
+  }
+}
 
 function promoteMale() {
   if(player.breed.malePool.length == 0) return;
@@ -112,7 +142,7 @@ function trash(pool, selector) {
 
 
 
-function addToPool(critter) {
+function addToBreederPool(critter) {
   let malePossible = player.breed.malePool.length < player.breed.maxPoolSize;
   let femalePossible = player.breed.femalePool.length < player.breed.maxPoolSize;
   
@@ -136,7 +166,7 @@ function productionMale() {
   let critterIndex = player.selectors.malePool.index ? player.selectors.malePool.index : 0;
   player.selectors.malePool = {};
   
-  toProduction(player.breed.malePool, critterIndex, player.breed.male)
+  toProduction(player.breed.malePool, critterIndex)
 }
 
 function productionFemale() {
@@ -144,12 +174,37 @@ function productionFemale() {
   let critterIndex = player.selectors.femalePool.index ? player.selectors.femalePool.index : 0;
   player.selectors.femalePool = {};
   
-  toProduction(player.breed.femalePool, critterIndex, player.breed.female)
+  toProduction(player.breed.femalePool, critterIndex)
 }
 
-function toProduction(pool, index, breeder) {
+function toProduction(pool, index) {
   let transfered = pool[index];
   addCritterToProduction(transfered);
+  
+  pool.splice(index, 1);
+
+  updatePoolDisplay();
+}
+
+function exploreMale() {
+  if(player.breed.malePool.length == 0) return;
+  let critterIndex = player.selectors.malePool.index ? player.selectors.malePool.index : 0;
+  player.selectors.malePool = {};
+  
+  toExplore(player.breed.malePool, critterIndex)
+}
+
+function exploreFemale() {
+  if(player.breed.femalePool.length == 0) return;
+  let critterIndex = player.selectors.femalePool.index ? player.selectors.femalePool.index : 0;
+  player.selectors.femalePool = {};
+  
+  toExplore(player.breed.femalePool, critterIndex)
+}
+
+function toExplore(pool, index) {
+  let transfered = pool[index];
+  addCritterToExplore(transfered);
   
   pool.splice(index, 1);
 

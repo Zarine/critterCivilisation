@@ -67,6 +67,6 @@ function hasUpgrade(id) {
 function applyUpgradeEffect() {
   if(hasUpgrade("u01")) { 
     player.mount.unlocked = true;
-    displayInitTabs();
   }
+  displayInitTabs();
 }

@@ -15,6 +15,7 @@ function init() {
   gameConstants.mainLoopInterval = 100;
   gameConstants.stats = ["Strength", "Stamina", "Agility"]
   gameConstants.numberOfStats = gameConstants.stats.length;
+  gameConstants.exploreString = "explore";
   let baseMaleCritter = new Critter([10, 10 ,10]);
   let baseFemaleCritter = new Critter([10, 10 ,10]);
   
@@ -50,6 +51,18 @@ function init() {
   player.upgrade.rna = 10;
   player.upgrade.dna = 10;
   player.upgrade.purchased = new Set([]);
+  
+  player.explore = {};
+  player.explore.time = Date.now();
+  player.explore.pool = [];
+  player.explore.maxPoolSize = 0;
+  player.explore.unlocked = false;
+  player.explore.activeMap = [];
+  player.explore.difficulty = 0;
+  player.explore.availableDifficulties = [1];
+  
+  player.battle = {};
+  player.battle.unlocked = false;
   
   player.selectors = {};
   player.selectors.malePool = {};
@@ -110,6 +123,18 @@ function productionLoop() {
   updateMountScreen();
   
   setTimeout(productionLoop, gameConstants.mainLoopInterval);
+}
+
+function exploreAndBattleLoop() {
+  let now = Date.now();
+  let diff = (now - player.explore.time);
+  player.explore.time = now;
+  
+  progressExplore(diff);
+  updateExploreScreen();
+  
+  setTimeout(exploreAndBattleLoop, gameConstants.mainLoopInterval);
+  
 }
 
 function progressBreed(diff) {

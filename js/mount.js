@@ -44,6 +44,8 @@ class Building {
 function initMount() { 
   buildings.push(new Building("Dirt Area", "b01", [0,0,0], function() { return true; }));
   buildings.push(new Building("Farm", "b02", [10,0,0], function() { return hasBuilding("b01"); }));
+  buildings.push(new Building("Scout Tower", "b03", [10,0,0], function() { return hasBuilding("b02"); }));
+  buildings.push(new Building("Barrack", "b04", [10,0,0], function() { return hasBuilding("b02"); }));
 }
 
 function hasBuildingListChanged() {
@@ -118,6 +120,15 @@ function applyBuildingEffect() {
     food.maxSize = 1;
     displayArea("foodProduction");
   }
+  if(hasBuilding("b03")) {
+    player.explore.unlocked = true;
+    player.explore.maxPoolSize = 1;
+    fullUpdateExploreScreen();
+  }
+  if(hasBuilding("b04")) {
+    player.battle.unlocked = true;
+  }
+  displayInitTabs();
 }
 
 function updateFood() {
@@ -135,7 +146,7 @@ function addCritterToProduction(critter) {
   let assigned = false;
   resourceMapping.forEach(resourceName => {
     if(assigned) return;
-    if(betterThanPool(critter, resourceName)) {
+    if(betterThanResourcePool(critter, resourceName)) {
       addToMountPool(critter, resourceName);
       assigned = true;
     }
@@ -144,31 +155,14 @@ function addCritterToProduction(critter) {
   updateMountScreen();
 }
 
-function betterThanPool(newCritter, type) {
+function betterThanResourcePool(newCritter, type) {
   let resource = getResource(type);
-  if(resource.pool.length < resource.maxSize) return true;
-  for(let i = 0 ; i < resource.pool.length; i++) {
-    let oldCritter = resource.pool[i];
-    if(betterThanCritter(oldCritter, newCritter, type)) return true;
-  }
-  return false;
-}
-
-function betterThanCritter(oldCritter, newCritter, type) {
-  if(oldCritter.production(type) < newCritter.production(type)) return true;
-  return false;
+  return betterThanPool(newCritter, type, resource.pool, resource.maxSize);
 }
 
 function addToMountPool(newCritter, type) {
   let resource = getResource(type);
-  if(resource.pool.length < resource.maxSize) {
-    resource.pool.push(newCritter);
-    return;
-  }
-  for(let i = 0 ; i < resource.pool.length; i++) {
-    let oldCritter = resource.pool[i];
-    if(betterThanCritter(oldCritter, newCritter, type)) oldCritter.update(newCritter.stats);
-  }
+  addToPool(newCritter, type, resource.pool, resource.maxSize);
 }
 
 function getResource(type) {

@@ -1,8 +1,16 @@
 function displayInitTabs() {
-  if(!player.mount.unlocked) {
-    $("#MountTab").addClass("hidden");
+  checkAndDisplayTab(player.mount, $("#MountTab"));
+  checkAndDisplayTab(player.explore, $("#ExploreTab"))
+  checkAndDisplayTab(player.battle, $("#BattleTab"))
+}
+
+function checkAndDisplayTab(data, html) {
+  if(data.unlocked) {
+    html.removeClass("hidden");
   }
-  else $("#MountTab").removeClass("hidden");
+  else {
+    html.addClass("hidden");
+  }
 }
 
 function displayInitHatchery() {
@@ -220,4 +228,49 @@ function updateEntireProductions() {
 function updateCritterTab(type) {
   let resource = getResource(type);
   updateCritterTableDisplay($("#" + type + "Pool"), resource.pool, undefined, resource.maxSize);
+}
+
+function updateExploreLeftScreen() {
+  updateExplorationCritterList();
+  updateDifficultyArea();
+}
+
+function updateExplorationCritterList() {
+  updateCritterTableDisplay($("#explorePool"), player.explore.pool, undefined, player.explore.maxPoolSize);
+}
+
+function updateDifficultyArea() {
+  if(player.explore.difficulty) {
+    $("#selectedDifficulty").html(player.explore.difficulty);
+    $("#displayDifficulty").removeClass("hidden");
+  }
+  else {
+    $("#displayDifficulty").addClass("hidden");
+  }
+  
+  let selectElement = $('#difficultySelect');
+  selectElement.empty();
+  $.each(player.explore.availableDifficulties, function(index, value) {
+    selectElement.append($('<option></option>').attr('value', value).text(value));
+  });
+}
+
+function displayMap() {
+  let map = player.explore.activeMap;
+  let htmlMapContainer = $("#map");
+  
+  let htmlMap = [];
+  for(let i = 0; i < map.length; i++) {
+    let line = map[i];
+    htmlMap.push('<tr class="mapLine">');
+    for(let j = 0; j < line.length; j++) {
+      htmlMap.push('<td class="mapCell ');
+      if(map[i][j].isSpecial) {
+        htmlMap.push(map[i][j].special.id);
+      }
+      htmlMap.push('">' + map[i][j].difficulty + '</td>');
+    }
+    htmlMap.push('</tr>');
+  }
+  htmlMapContainer.html(htmlMap.join(""));
 }

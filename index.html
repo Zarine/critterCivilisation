@@ -10,6 +10,7 @@
     <script src="js/display.js"></script>
     <script src="js/upgrade.js"></script>
     <script src="js/mount.js"></script>
+    <script src="js/map.js"></script>
     <script src="js/main.js"></script>
   </head>
   <body>
@@ -19,11 +20,17 @@
         <li id="HatcheryTab" onClick="switchTab('hatchery')">
           <div>Hatchery</div>
         </li>
-        <li id="MountTab" onClick="switchTab('mount')">
+        <li id="MountTab" class="hidden" onClick="switchTab('mount')">
           <div>Mount</div>
         </li>
         <li id="UpgradeTab" onClick="switchTab('upgrade')">
           <div>Upgrade</div>
+        </li>
+        <li id="ExploreTab" class="hidden" onClick="switchTab('explore')">
+          <div>Explore</div>
+        </li>
+        <li id="BattleTab" class="hidden" onClick="switchTab('battle')">
+          <div>Battle</div>
         </li>
       </ul>
     </div>
@@ -51,6 +58,7 @@
             </table>
             <button onClick="promoteMale()">Promote</button>
             <button id="maleToProd" class="hidden" onClick="productionMale()">To production</button>
+            <button id="maleToExplore" class="hidden" onClick="exploreMale()">To Exploration</button>
             <button onClick="trashMale()">Trash</button>
           </div>
           <div class="poolData">
@@ -59,6 +67,7 @@
             </table>
             <button onClick="promoteFemale()">Promote</button>
             <button id="femaleToProd" class="hidden" onClick="productionFemale()">To production</button>
+            <button id="femaleToExplore" class="hidden" onClick="exploreFemale()">To Exploration</button>
             <button onClick="trashFemale()">Trash</button>
           </div>
         </div>
@@ -153,6 +162,30 @@
             </div>
           </div>
         </div>
+      </div>
+      <div id="explore" class="tab hidden">
+        <h2>Exploration</h2>
+        <div class="exploreContainer">
+          <div class="exploreUnitContainer">
+            <div>Exploration difficulty</div>
+            <select id="difficultySelect"></select>
+            <button onClick="selectDifficulty()">Go Explore</button>
+            <div id="displayDifficulty">
+              <span>Current Difficulty : </span>
+              <span id="selectedDifficulty">10</span>
+            </div>
+            <div class="separator"></div>
+            <table id="explorePool" class="statTable">
+            </table>      
+          </div>
+          <div class="exploreMapContainer">
+            <table id="map" class="map">
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="battle" class="tab hidden">
+        <h2>Battle</h2>
       </div>
       
       
