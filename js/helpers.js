@@ -6,6 +6,16 @@ function getRandomArbitraryInt(min, max) {
   return Math.floor(getRandomArbitrary(min, max + 1));
 };
 
+function calculateDistance(point1, point2) {
+  let distanceX = point2.x - point1.x;
+  let distanceY = point2.y - point1.y;
+  return Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+}
+
+function isEmpty(object) {
+  return (object && Object.keys(object).length !== 0)
+}
+
 function addCellToArray(array, value, tdClass) {
   let html = []
   if(tdClass) {

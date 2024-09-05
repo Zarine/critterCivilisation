@@ -240,19 +240,20 @@ function updateExplorationCritterList() {
 }
 
 function updateDifficultyArea() {
-  if(player.explore.difficulty) {
-    $("#selectedDifficulty").html(player.explore.difficulty);
-    $("#displayDifficulty").removeClass("hidden");
-  }
-  else {
-    $("#displayDifficulty").addClass("hidden");
-  }
-  
   let selectElement = $('#difficultySelect');
   selectElement.empty();
   $.each(player.explore.availableDifficulties, function(index, value) {
     selectElement.append($('<option></option>').attr('value', value).text(value));
   });
+  
+  if(player.explore.difficulty) {
+    $("#selectedDifficulty").html(player.explore.difficulty);
+    $("#displayDifficulty").removeClass("hidden");
+    $('#difficultySelect').val(player.explore.difficulty);
+  }
+  else {
+    $("#displayDifficulty").addClass("hidden");
+  }  
 }
 
 function displayMap() {
@@ -265,10 +266,20 @@ function displayMap() {
     htmlMap.push('<tr class="mapLine">');
     for(let j = 0; j < line.length; j++) {
       htmlMap.push('<td class="mapCell ');
-      if(map[i][j].isSpecial) {
-        htmlMap.push(map[i][j].special.id);
+      if(!map[i][j].discovered) {
+        htmlMap.push('undiscovered"></td>');
       }
-      htmlMap.push('">' + map[i][j].difficulty + '</td>');
+      else if(!map[i][j].scouted) {
+        htmlMap.push('"></td>');
+      }
+      else {
+        if(map[i][j].isSpecial) {
+          htmlMap.push(map[i][j].special.id);
+        }
+        htmlMap.push('">' + map[i][j].difficulty + '</td>');
+      }
+      
+      
     }
     htmlMap.push('</tr>');
   }

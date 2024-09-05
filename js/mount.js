@@ -133,11 +133,18 @@ function applyBuildingEffect() {
 
 function updateFood() {
   let food = getResource("food");
-  food.quantity = 4;
+  let foodCalculation = gameConstants.baseFood;
+  
+  let foodFromFarm = 0;
   food.pool.forEach(critter => {
-    food.quantity += critter.production("food");
+    foodFromFarm += critter.production("food");
   });
-  food.quantity = Math.floor(food.quantity);
+  foodCalculation += Math.sqrt(foodFromFarm);
+  
+  if(hasBuilding("b02")) {
+    foodCalculation += 1;
+  }
+  food.quantity = Math.floor(foodCalculation);
   
 }
 
@@ -175,14 +182,14 @@ function getResourceQuantity(type) {
 
 function progressProduction(diff) {
   
-  calculateDirtProgress(diff);
+  calculateResourceProgress(diff, "dirt");
   updateResource(getResource("dirt"));
 }
 
-function calculateDirtProgress(diff) {
-  let dirt = getResource("dirt");
-  let dirtPower = dirt.pool.reduce((acc, obj) => acc + obj.dirtProduction(), 0);
-  dirt.progress += (diff * dirtPower / 1000);
+function calculateResourceProgress(diff, type) {
+  let resource = getResource(type);
+  let power = resource.pool.reduce((acc, obj) => acc + obj.production(type), 0);
+  resource.progress += (diff * power / 1000);
 }
 
 function updateResource(resource) {

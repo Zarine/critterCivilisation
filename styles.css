@@ -129,6 +129,15 @@ tr.selected td {
 
 .mapCell.start {
   background: green;
+  font-size: 0;
+}
+
+.mapCell.target {
+  background: red;
+}
+
+.mapCell.undiscovered {
+  background: grey;
 }
 
 .footer {
